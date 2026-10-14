@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#FBF8F4"/>
+  <circle cx="980" cy="120" r="320" fill="#F6E8DC"/>
+  <rect x="80" y="246" width="56" height="56" rx="14" fill="#B4653A"/>
+  <g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(94 260) scale(1.17)">
+    <path d="M1 10 11 2l10 8"/><path d="M3.8 8.6V20h14.4V8.6"/>
+  </g>
+  <text x="156" y="288" font-family="Georgia,serif" font-size="40" font-weight="600" fill="#1D1A16">Casa Bonita LLC</text>
+  <text x="80" y="380" font-family="Georgia,serif" font-size="62" font-weight="600" fill="#1D1A16">Home cleaning you can trust</text>
+  <text x="80" y="436" font-family="system-ui,sans-serif" font-size="28" fill="#6E6456">Licensed &amp; insured  ·  Family owned  ·  Free quotes</text>
+</svg>
