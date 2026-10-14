@@ -112,10 +112,17 @@ document.getElementById("langToggle")?.addEventListener("click", () => {
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const revealables = document.querySelectorAll(".reveal");
 
-/* Reveals are two-way: an element animates in when it enters the viewport
-   from either direction, and resets once it has fully left, so scrolling
-   back up replays the animation instead of showing static content.
-   Counters are the exception — they only ever tick up once. */
+/* The reveal is reversible: it plays forwards as an element rises past a
+   line near the bottom of the screen, and backwards as it sinks below
+   that line again on the way up.
+
+   The rootMargin does the work. The bottom edge is pulled up 10% to make
+   the trigger line, and the top edge is pushed far up the page so that
+   scrolling *past* something never un-reveals it — only the bottom of
+   the screen ever hides anything, which is what makes it read as a
+   straight reversal of the scroll.
+
+   Counters are the exception: they tick up once and stay put. */
 const counted = new WeakSet();
 
 if (reduceMotion || !("IntersectionObserver" in window)) {
@@ -125,23 +132,15 @@ if (reduceMotion || !("IntersectionObserver" in window)) {
     (entries) => {
       entries.forEach((entry) => {
         const el = entry.target;
+        el.classList.toggle("is-in", entry.isIntersecting);
 
-        if (entry.intersectionRatio >= 0.1) {
-          el.classList.remove("is-above");
-          el.classList.add("is-in");
-          if (el.classList.contains("stat") && !counted.has(el)) {
-            counted.add(el);
-            countUp(el);
-          }
-        } else if (!entry.isIntersecting) {
-          /* Fully out of frame. Reset, and aim the travel at the edge it
-             will come back through: above the fold means it drops in. */
-          el.classList.remove("is-in");
-          el.classList.toggle("is-above", entry.boundingClientRect.top < 0);
+        if (entry.isIntersecting && el.classList.contains("stat") && !counted.has(el)) {
+          counted.add(el);
+          countUp(el);
         }
       });
     },
-    { threshold: [0, 0.1], rootMargin: "-2% 0px -8% 0px" }
+    { threshold: 0, rootMargin: "9999px 0px -10% 0px" }
   );
   revealables.forEach((el) => revealObserver.observe(el));
 }

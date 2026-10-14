@@ -537,19 +537,24 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .callbar.is-up { transform: translateY(0); }
 
 /* ---------- SCROLL REVEALS ----------
-   Reveals run in both directions: an element fades out once it leaves
-   the viewport and plays again on the way back. `.is-above` flips the
-   travel direction so something re-entering from the top drops down
-   into place instead of rising up through the edge of the screen.
+   One trigger line sits near the bottom of the screen. Above it an
+   element is shown, below it it is hidden — so scrolling up plays the
+   entrance backwards: the element sinks back down and fades out exactly
+   the way it rose up and faded in.
+
+   The stagger delay only applies on the way in. Going out, everything
+   leaves at once so the motion stays glued to the scroll.
 ------------------------------------- */
 .reveal {
   opacity: 0;
   transform: translateY(22px);
   transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
   transition-delay: calc(var(--d, 0) * 90ms);
 }
-.reveal.is-above { transform: translateY(-22px); }
-.reveal.is-in { opacity: 1; transform: none; }
 .reveal[data-d="1"] { --d: 1; }
 .reveal[data-d="2"] { --d: 2; }
 .reveal[data-d="3"] { --d: 3; }
