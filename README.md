@@ -4,12 +4,14 @@ A static, dependency-free marketing site for a home cleaning business.
 Three files do all the work. No build step, no npm, no framework.
 
 ```
-index.html              all the content and structure
-assets/css/styles.css   all the styling; colours and fonts are variables at the top
-assets/js/i18n.js       the Spanish translations
-assets/js/app.js        scroll animations, language toggle, the quote form
-assets/img/             placeholder images (swap these for real photos)
-CONTENT.md              what to collect from her and exactly where it goes
+index.html                   all the content and structure
+privacy.html / terms.html    legal pages (drafts — see CONTENT.md)
+assets/css/styles.css        all the styling; colours and fonts are variables at the top
+assets/js/i18n.js            the Spanish translations
+assets/js/availability.js    the booking calendar — the one file that needs regular updating
+assets/js/app.js             scroll animations, language, sliders, carousel, quote form
+assets/img/                  placeholder images (swap these for real photos)
+CONTENT.md                   what to collect from her and exactly where it goes
 ```
 
 Everything degrades gracefully: with JavaScript blocked the page still reads
@@ -161,6 +163,41 @@ that plays on load. The `.intro` class on `<body>` drives that, and the script
 removes it after 1.4s.
 
 Under `prefers-reduced-motion` none of this runs — everything is simply visible.
+
+---
+
+## Before / after sliders
+
+Any `<figure>` with `data-compare` becomes a slider. It needs two images —
+`.cmp-before` and `.cmp-after` — plus the handle and the range input; copy an
+existing one from the gallery in `index.html` rather than writing it from
+scratch.
+
+The mechanism is deliberately boring: both photos stack at full size, the
+"after" one is clipped to `--cmp` percent of the width, and a real
+`<input type="range">` sits invisibly on top driving that number. Using a real
+range input means keyboard support, touch dragging, and screen-reader behaviour
+come for free instead of being hand-rolled and half-broken.
+
+Each slider nudges itself off centre once when it first scrolls into view, so
+people can tell it's draggable. That hint is skipped under
+`prefers-reduced-motion`.
+
+---
+
+## The availability calendar
+
+Lives above the quote form and shows the next 14 days. It's driven by
+`assets/js/availability.js`, which is written to be edited by someone who
+doesn't code — days are open by default, so only the ones that fill up or close
+need listing.
+
+It never shows times, only how many slots remain, so the schedule itself stays
+private.
+
+It is **manual**. There's no booking system behind it, and it will be wrong the
+moment it isn't updated. Deleting the `<div class="avail">` block from
+`index.html` removes it cleanly if it becomes a chore.
 
 ---
 

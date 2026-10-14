@@ -479,3 +479,137 @@ function initCarousel(root) {
 }
 
 document.querySelectorAll(".carousel").forEach(initCarousel);
+
+/* ─────────────────────────────────────────────────────────────
+   7. Before / after sliders
+
+   The range input does the hard parts — dragging, touch, keyboard,
+   screen readers — so all this has to do is copy its value into a CSS
+   variable that the clip-path reads.
+   ───────────────────────────────────────────────────────────── */
+document.querySelectorAll("[data-compare]").forEach((fig) => {
+  const range = fig.querySelector(".cmp-range");
+  if (!range) return;
+
+  const apply = () => fig.style.setProperty("--cmp", range.value + "%");
+  range.addEventListener("input", apply);
+  apply();
+
+  /* Nudge it off centre on first sight so it reads as draggable rather
+     than as a photo with a line through it. */
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const hint = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        hint.unobserve(fig);
+        let v = 50;
+        const to = (target, after) => {
+          const step = () => {
+            v += (target - v) * 0.12;
+            range.value = String(Math.round(v));
+            apply();
+            if (Math.abs(target - v) > 0.6) requestAnimationFrame(step);
+            else if (after) setTimeout(after, 120);
+          };
+          requestAnimationFrame(step);
+        };
+        setTimeout(() => to(66, () => to(50)), 220);
+      });
+    }, { threshold: 0.45 });
+    hint.observe(fig);
+  }
+});
+
+/* ─────────────────────────────────────────────────────────────
+   8. One-time / recurring switch on the service card
+   ───────────────────────────────────────────────────────────── */
+document.querySelectorAll(".card-switch").forEach((card) => {
+  const buttons = [...card.querySelectorAll(".seg-btn")];
+  const plans = [...card.querySelectorAll(".plan")];
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      buttons.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", String(on));
+      });
+      plans.forEach((p) => { p.hidden = p.dataset.plan !== btn.dataset.plan; });
+    });
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────
+   9. Availability calendar
+
+   Renders the next 14 days from assets/js/availability.js. Days are
+   open by default; only exceptions are listed in that file, which keeps
+   the upkeep to marking the days that fill. No times are ever shown —
+   only how many slots remain.
+   ───────────────────────────────────────────────────────────── */
+(function availability() {
+  const grid = document.getElementById("availGrid");
+  const data = window.CB_AVAILABILITY;
+  if (!grid || !data) return;
+
+  const DAYS_SHOWN = 14;
+  const dowKeys = ["dow.sun", "dow.mon", "dow.tue", "dow.wed", "dow.thu", "dow.fri", "dow.sat"];
+
+  /* Local date as YYYY-MM-DD. Deliberately not toISOString(), which
+     converts to UTC and can land on the wrong day. */
+  function key(d) {
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${m}-${day}`;
+  }
+
+  function render() {
+    grid.textContent = "";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < DAYS_SHOWN; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+
+      const override = data.dates ? data.dates[key(d)] : undefined;
+      const normal = data.weekly ? data.weekly[d.getDay()] : 0;
+      const closed = override === "closed" || (override === undefined && normal === 0);
+      const left = closed ? 0 : (override === undefined ? normal : Number(override));
+
+      let state = "full";
+      let label = t("avail.full");
+      if (closed) {
+        state = "closed";
+        label = t("avail.closed");
+      } else if (left > 1) {
+        state = "open";
+        label = t("avail.spots").replace("{n}", String(left));
+      } else if (left === 1) {
+        state = "few";
+        label = t("avail.one");
+      }
+
+      const li = document.createElement("li");
+      li.className = `day day-${state}` + (i === 0 ? " day-today" : "");
+
+      const dow = document.createElement("span");
+      dow.className = "day-dow";
+      dow.textContent = t(dowKeys[d.getDay()]);
+
+      const num = document.createElement("span");
+      num.className = "day-num";
+      num.textContent = String(d.getDate());
+
+      const st = document.createElement("span");
+      st.className = "day-state";
+      st.textContent = label;
+
+      li.append(dow, num, st);
+      grid.appendChild(li);
+    }
+  }
+
+  render();
+  document.addEventListener("cb:langchange", render);
+})();

@@ -20,35 +20,45 @@ window.CB_ES = {
   "nav.areas": "Zonas",
   "nav.faq": "Preguntas",
   "nav.contact": "Contacto",
-  "cta.call": "Llamar",
-  "cta.callNow": "Llame para una cotización gratis",
+  "cta.quote": "Cotización",
+  "cta.quoteNow": "Pida una cotización gratis",
 
   /* hero */
-  "hero.eyebrow": "Con licencia y seguro · Negocio familiar · Se habla español",
+  "hero.eyebrow": "LLC con licencia · Negocio familiar · Se habla español",
   "hero.h1a": "Una casa que se siente",
   "hero.h1b": "como nueva",
   "hero.h1c": "cada vez.",
   "hero.lede": "Casa Bonita LLC es una empresa de limpieza pequeña y familiar. Las mismas personas de confianza en cada visita, con precios fijos y sin sorpresas.",
-  "hero.cta1": "Llame al (555) 123-4567",
+  "hero.cta1": "Pida una cotización gratis",
   "hero.cta2": "Mándenos un texto",
-  "hero.note": "Cotizaciones gratis · Respondemos en pocas horas",
+  "hero.note": "Cotizaciones gratis · Respondemos textos y solicitudes el mismo día",
   "hero.badgeNum": "5.0",
   "hero.badgeText": "de familias de la zona",
+
+  /* before / after slider */
+  "cmp.before": "Antes",
+  "cmp.after": "Después",
+  "cmp.slider": "Deslice para ver más del antes o del después",
 
   /* stats */
   "stat.years": "Años limpiando casas",
   "stat.homes": "Casas atendidas",
-  "stat.insured": "Con licencia y seguro",
+  "stat.reply": "Tiempo típico de respuesta",
   "stat.guarantee": "Garantía de re-limpieza",
 
   /* services */
   "services.kicker": "Servicios",
   "services.h2": "Elija la limpieza que su casa necesita",
-  "services.sub": "Cada visita se hace a mano, cuarto por cuarto, con nuestros propios productos. ¿No sabe cuál le conviene? Llámenos y le decimos con honestidad.",
+  "services.sub": "Cada visita se hace a mano, cuarto por cuarto, con nuestros propios productos. ¿No sabe cuál le conviene? Mándenos una solicitud y le decimos con honestidad.",
 
-  "svc1.h": "Limpieza Regular",
-  "svc1.p": "Semanal, cada dos semanas o mensual. Cocinas, baños, pisos, polvo y basura — siempre fresco.",
-  "svc1.price": "Desde $120 por visita",
+  "svc1.h": "Limpieza Estándar",
+  "svc1.tabOnce": "Una sola vez",
+  "svc1.tabRepeat": "Periódica",
+  "svc1.onceP": "Una sola visita, sin compromiso. Cocinas, baños, pisos, polvo y basura — toda la casa vuelve a sentirse fresca.",
+  "svc1.oncePrice": "Desde $150",
+  "svc1.repeatP": "La misma limpieza con horario fijo — semanal, cada dos semanas o mensual. Se acumula menos entre visitas, así que cada una cuesta menos.",
+  "svc1.repeatPrice": "Desde $120 por visita",
+  "svc1.note": "Empiece con una limpieza de una sola vez. Si después cambia a un horario fijo, cada visita desde entonces le sale más barata.",
 
   "svc2.h": "Limpieza Profunda",
   "svc2.p": "El reinicio completo. Zócalos, marcos de puertas, ventilaciones, dentro de gabinetes, lechada y los rincones que una limpieza normal no alcanza.",
@@ -82,8 +92,8 @@ window.CB_ES = {
   /* process */
   "process.kicker": "Cómo funciona",
   "process.h2": "Cuatro pasos, sin vueltas",
-  "step1.h": "Llame o escriba",
-  "step1.p": "Díganos el tamaño de su casa y qué le molesta más. Toma dos minutos.",
+  "step1.h": "Mándenos un mensaje",
+  "step1.p": "Mande el formulario o un texto con el tamaño de su casa y qué le molesta más. Toma dos minutos.",
   "step2.h": "Reciba un precio fijo",
   "step2.p": "Le damos un solo precio, por escrito, antes de que alguien llegue. Sin sorpresas por hora.",
   "step3.h": "Limpiamos",
@@ -94,13 +104,11 @@ window.CB_ES = {
   /* gallery */
   "work.kicker": "Nuestro trabajo",
   "work.h2": "Casas reales, resultados reales",
-  "work.sub": "Algunas visitas recientes. Cada foto es de una casa que limpiamos de verdad, publicada con permiso.",
+  "work.sub": "Arrastre el control en cualquier foto para pasar del antes al después. Cada par es de una casa que limpiamos de verdad, publicado con permiso.",
   "work.c1": "Cocina — limpieza profunda",
   "work.c2": "Baño — detalle de lechada",
-  "work.c3": "Sala — limpieza regular",
-  "work.c4": "Recámara — mudanza",
   "work.c5": "Pisos — después de obra",
-  "work.c6": "Electrodomésticos — por dentro y fuera",
+  "work.c6": "Horno — por dentro y fuera",
 
   /* reviews */
   "rev.kicker": "Reseñas",
@@ -131,16 +139,16 @@ window.CB_ES = {
   "about.kicker": "Nosotros",
   "about.h2": "Un negocio familiar, no una franquicia",
   "about.p1": "Casa Bonita empezó con una persona, un carro y una lista corta de vecinos que necesitaban ayuda. Años después seguimos siendo pequeños a propósito — lo suficiente para que vea las mismas caras cada visita y pueda hablar directamente con la dueña.",
-  "about.p2": "Somos una LLC registrada, con seguro completo, y traemos nuestros propios productos. Si prefiere productos sin aroma o seguros para mascotas, solo díganos.",
-  "about.t1": "LLC registrada y con seguro completo",
-  "about.t2": "Personal verificado y de muchos años",
+  "about.p2": "Somos una LLC registrada y traemos nuestros propios productos. Si prefiere productos sin aroma o seguros para mascotas, solo díganos.",
+  "about.t1": "LLC registrada y con licencia para operar",
+  "about.t2": "El mismo equipo pequeño en cada visita",
   "about.t3": "Nuestros propios productos y equipo",
   "about.t4": "Bilingüe — inglés y español",
 
   /* areas */
   "areas.kicker": "Zona de servicio",
   "areas.h2": "Dónde limpiamos",
-  "areas.sub": "¿No ve su ciudad? Llame de todos modos — si está cerca, casi siempre lo podemos acomodar.",
+  "areas.sub": "¿No ve su ciudad? Pregunte de todos modos — si está cerca, casi siempre lo podemos acomodar.",
 
   /* faq */
   "faq.kicker": "Preguntas",
@@ -151,20 +159,40 @@ window.CB_ES = {
   "faq2.a": "Sí — todo, incluyendo aspiradoras y paños de microfibra. Si prefiere que usemos sus productos, con gusto lo hacemos.",
   "faq3.q": "¿Cómo se decide el precio?",
   "faq3.a": "Por el tamaño y la condición de la casa, no por hora. Recibe un precio fijo antes de empezar, así el número nunca le cambia.",
-  "faq4.q": "¿Tienen seguro?",
-  "faq4.a": "Casa Bonita LLC es un negocio registrado con seguro de responsabilidad general. Le podemos enviar el certificado si lo pide.",
+  "faq4.q": "¿Cuál es la forma más rápida de contactarlos?",
+  "faq4.a": "Mande una solicitud de cotización o un mensaje de texto. Durante el día casi siempre estamos dentro de una casa y no podemos contestar el teléfono, así que un mensaje recibe respuesta más rápido que una llamada — normalmente el mismo día.",
   "faq5.q": "¿Y las mascotas?",
   "faq5.a": "Las queremos. Díganos sus nombres y lo que debamos saber, y cambiamos a productos seguros para mascotas y de bajo aroma.",
   "faq6.q": "¿Cómo puedo pagar?",
   "faq6.a": "Efectivo, cheque, Zelle, Venmo o tarjeta. El pago se hace después de la visita — nunca antes.",
 
+  /* availability */
+  "avail.h": "Próximas dos semanas",
+  "avail.keyOpen": "Lugares disponibles",
+  "avail.keyFew": "Casi lleno",
+  "avail.keyFull": "Lleno",
+  "avail.spots": "{n} lugares",
+  "avail.one": "1 lugar",
+  "avail.full": "Lleno",
+  "avail.closed": "Cerrado",
+  "avail.note": "Los lugares se apartan cuando se acepta una cotización, no cuando se manda la solicitud. Si el día que quiere está lleno, pregunte de todos modos — sí hay cancelaciones.",
+  "dow.sun": "Dom",
+  "dow.mon": "Lun",
+  "dow.tue": "Mar",
+  "dow.wed": "Mié",
+  "dow.thu": "Jue",
+  "dow.fri": "Vie",
+  "dow.sat": "Sáb",
+
   /* contact */
-  "contact.kicker": "Cotización gratis",
+  "contact.kicker": "Agende una limpieza",
   "contact.h2": "Pongamos su casa en el calendario",
-  "contact.p": "La forma más rápida de localizarnos es una llamada o un texto. Si le es más fácil, llene el formulario y le respondemos el mismo día.",
-  "contact.callLabel": "Llamar",
-  "contact.textLabel": "Texto",
+  "contact.p": "Mande el formulario y le damos un precio fijo el mismo día. Un mensaje de texto funciona igual de bien — lo que le sea más fácil.",
+  "contact.otherH": "Otras formas de localizarnos",
+  "contact.callLabel": "Teléfono",
+  "contact.textLabel": "Texto — normalmente lo más rápido",
   "contact.emailLabel": "Correo",
+  "contact.phoneNote": "Casi todo el día estamos dentro de la casa de algún cliente, así que las llamadas suelen ir al buzón. Un texto o una solicitud de cotización nos llega mucho más rápido.",
   "contact.hoursLabel": "Horario",
   "contact.hours": "Lun–Sáb, 8am–6pm · Cerrado los domingos",
 
@@ -175,7 +203,8 @@ window.CB_ES = {
   "form.email": "Correo",
   "form.optional": "(opcional)",
   "form.service": "Servicio",
-  "form.s1": "Limpieza regular",
+  "form.s0": "Limpieza de una sola vez",
+  "form.s1": "Limpieza periódica",
   "form.s2": "Limpieza profunda",
   "form.s3": "Mudanza (entrada / salida)",
   "form.s4": "Después de construcción",
@@ -188,7 +217,8 @@ window.CB_ES = {
   "form.z4": "4 o más recámaras",
   "form.msg": "¿Algo que debamos saber?",
   "form.submit": "Enviar solicitud",
-  "form.note": "Nada de spam. Solo usamos esto para responderle sobre su cotización.",
+  "form.note": "Nada de spam. Solo usamos esto para responderle sobre su cotización. Vea nuestro",
+  "form.noteLink": "aviso de privacidad",
 
   /* form runtime messages */
   "form.err.required": "Por favor complete su nombre y teléfono.",
@@ -198,8 +228,12 @@ window.CB_ES = {
   "form.handoff": "Abriendo su app de mensajes con la solicitud lista para enviar.",
 
   /* footer */
-  "foot.tag": "Limpieza de casas con licencia y seguro. Negocio familiar.",
+  "foot.tag": "Limpieza de casas con licencia. Negocio familiar.",
+  "foot.text": "Texto al (555) 123-4567",
   "foot.hours": "Lun–Sáb, 8am–6pm",
+  "foot.credentials": "Casa Bonita LLC es una compañía de responsabilidad limitada registrada. Contamos con seguro de responsabilidad general; los clientes que necesiten comprobante de cobertura o los datos de nuestra licencia pueden pedirlos y se los enviamos.",
+  "foot.privacy": "Aviso de Privacidad",
+  "foot.terms": "Términos del Servicio",
   "foot.rights": "Todos los derechos reservados."
 };
 
@@ -210,5 +244,18 @@ window.CB_EN_RUNTIME = {
   "form.ok": "Thank you! We'll get back to you shortly.",
   "form.fail": "Couldn't send. Please call or text (555) 123-4567.",
   "form.handoff": "Opening your messaging app with the request ready to send.",
-  "carousel.dot": "Go to reviews {n}"
+  "carousel.dot": "Go to reviews {n}",
+
+  /* Built by script, so the English lives here rather than in the HTML. */
+  "avail.spots": "{n} spots",
+  "avail.one": "1 spot left",
+  "avail.full": "Full",
+  "avail.closed": "Closed",
+  "dow.sun": "Sun",
+  "dow.mon": "Mon",
+  "dow.tue": "Tue",
+  "dow.wed": "Wed",
+  "dow.thu": "Thu",
+  "dow.fri": "Fri",
+  "dow.sat": "Sat"
 };

@@ -208,6 +208,73 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .hero-photo img { width: 100%; aspect-ratio: 4 / 4.6; object-fit: cover; }
 
+/* ---------- BEFORE / AFTER SLIDER ----------
+   Both photos sit stacked at full size. The "after" one is clipped to
+   --cmp% of the width, so dragging the handle wipes between them. The
+   handle is a real <input type="range"> laid over the top and made
+   invisible — that buys keyboard support, touch dragging, and screen
+   reader behaviour for free, with no custom event handling.
+-------------------------------------------- */
+.compare { --cmp: 50%; position: relative; isolation: isolate; touch-action: pan-y; }
+.compare img {
+  display: block; width: 100%;
+  user-select: none; -webkit-user-drag: none;
+}
+.compare .cmp-after {
+  position: absolute; inset: 0; height: 100%;
+  clip-path: inset(0 calc(100% - var(--cmp)) 0 0);
+}
+
+.cmp-tag {
+  position: absolute; top: 12px; z-index: 3;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  background: rgb(0 0 0 / .55); color: #fff;
+  backdrop-filter: blur(4px);
+  opacity: .9; pointer-events: none;
+  transition: opacity .2s;
+}
+.cmp-tag-before { right: 12px; }
+.cmp-tag-after  { left: 12px; background: var(--accent); }
+
+/* The visible divider line and grip. */
+.cmp-handle {
+  position: absolute; top: 0; bottom: 0; z-index: 4;
+  left: var(--cmp); width: 2px; margin-left: -1px;
+  background: rgb(255 255 255 / .9);
+  box-shadow: 0 0 10px rgb(0 0 0 / .35);
+  pointer-events: none;
+}
+.cmp-handle::after {
+  content: "";
+  position: absolute; top: 50%; left: 50%;
+  width: 40px; height: 40px; margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D1A16' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 7-5 5 5 5M15 7l5 5-5 5'/%3E%3C/svg%3E") center / 20px no-repeat;
+  box-shadow: 0 4px 14px rgb(0 0 0 / .3);
+}
+
+/* The range input itself is invisible but covers the whole image. */
+.cmp-range {
+  position: absolute; inset: 0; z-index: 5;
+  width: 100%; height: 100%; margin: 0; padding: 0;
+  background: transparent; border: none;
+  appearance: none; -webkit-appearance: none;
+  cursor: ew-resize;
+}
+.cmp-range::-webkit-slider-thumb {
+  appearance: none; -webkit-appearance: none;
+  width: 44px; height: 100vh; background: transparent; cursor: ew-resize;
+}
+.cmp-range::-moz-range-thumb {
+  width: 44px; height: 100vh; background: transparent; border: none; cursor: ew-resize;
+}
+.cmp-range:focus { outline: none; }
+.cmp-range:focus-visible ~ .cmp-handle {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgb(var(--accent-glow) / .45);
+}
+
 .hero-badge {
   position: absolute; left: -18px; bottom: 26px;
   background: var(--surface); border: 1px solid var(--line);
@@ -270,6 +337,33 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-size: 14px; font-weight: 600; color: var(--accent-ink);
 }
 
+/* ---------- ONE-TIME / RECURRING SWITCH ---------- */
+.card-switch .plan { display: flex; flex-direction: column; flex: 1; }
+.card-switch .plan[hidden] { display: none; }
+
+.seg {
+  display: inline-flex; gap: 3px; margin-bottom: 15px;
+  padding: 3px; border-radius: 999px;
+  background: var(--bg-alt); border: 1px solid var(--line);
+}
+.seg-btn {
+  padding: 6px 14px; border: none; border-radius: 999px;
+  background: transparent; color: var(--muted);
+  font-size: 13.5px; font-weight: 600; cursor: pointer;
+  transition: background .2s var(--ease), color .2s, box-shadow .2s;
+}
+.seg-btn:hover { color: var(--ink); }
+.seg-btn.is-on {
+  background: var(--surface); color: var(--accent-ink);
+  box-shadow: 0 2px 8px -4px rgb(var(--shadow) / .6);
+}
+
+.card-note {
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 13.5px; color: var(--muted);
+}
+
 .addons { margin-top: 34px; }
 .addons-label { font-size: 13.5px; font-weight: 600; color: var(--muted); margin-bottom: 12px; }
 .chips { display: flex; flex-wrap: wrap; gap: 9px; }
@@ -297,23 +391,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .step h3 { font-size: 18px; margin-bottom: 7px; }
 .step p { color: var(--muted); font-size: 15px; }
 
-/* ---------- GALLERY ---------- */
-.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+/* ---------- GALLERY (before / after tiles) ---------- */
+.gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .shot {
   margin: 0; border-radius: var(--r-md); overflow: hidden;
   background: var(--bg-alt); border: 1px solid var(--line);
   position: relative;
+  box-shadow: 0 20px 40px -34px rgb(var(--shadow) / .55);
 }
-.shot img {
-  width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
-  transition: transform .6s var(--ease);
-}
-.shot:hover img { transform: scale(1.045); }
+.shot img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 .shot figcaption {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 26px 16px 13px;
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+  padding: 30px 16px 13px;
   font-size: 13.5px; font-weight: 600; color: #fff;
   background: linear-gradient(transparent, rgb(0 0 0 / .62));
+  pointer-events: none;
 }
 
 /* ---------- REVIEWS CAROUSEL ----------
@@ -449,13 +541,65 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .faq details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
 .faq details p { padding: 0 0 20px; color: var(--muted); font-size: 15.5px; }
 
+/* ---------- AVAILABILITY ---------- */
+.avail {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: clamp(20px, 2.6vw, 28px);
+  margin-bottom: clamp(28px, 3.5vw, 44px);
+  box-shadow: 0 24px 48px -42px rgb(var(--shadow) / .5);
+}
+.avail-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 18px;
+}
+.avail-head h3 { font-family: var(--font-display); font-size: 20px; }
+.avail-key { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); }
+.key-item { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dot-open { background: var(--accent); }
+.dot-few  { background: #D79A4E; }
+.dot-full { background: var(--line); border: 1px solid #C9BEB0; }
+
+.avail-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+.day {
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 9px 6px 10px; text-align: center;
+  background: var(--bg);
+  display: flex; flex-direction: column; gap: 2px;
+  min-height: 74px;
+}
+.day-dow { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.day-num { font-family: var(--font-display); font-size: 19px; font-weight: 600; line-height: 1.1; }
+.day-state { font-size: 11px; margin-top: auto; font-weight: 600; }
+
+.day-open  { border-color: color-mix(in srgb, var(--accent) 34%, var(--line)); background: var(--surface); }
+.day-open .day-state { color: var(--accent-ink); }
+.day-few   { border-color: #E6C799; background: #FDF7EE; }
+.day-few .day-state { color: #9A6A20; }
+.day-full  { background: var(--bg-alt); }
+.day-full .day-num, .day-full .day-dow { opacity: .45; }
+.day-full .day-state { color: var(--muted); }
+.day-closed { background: repeating-linear-gradient(135deg, var(--bg-alt), var(--bg-alt) 6px, var(--bg) 6px, var(--bg) 12px); }
+.day-closed .day-num, .day-closed .day-dow { opacity: .4; }
+.day-closed .day-state { color: var(--muted); }
+.day-today { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+.avail-note { margin-top: 16px; font-size: 13px; color: var(--muted); }
+
 /* ---------- CONTACT ---------- */
 .section-contact { background: var(--bg-alt); }
-.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 60px); align-items: start; }
-.contact-copy h2 { font-family: var(--font-display); font-size: clamp(28px, 3.6vw, 42px); margin-bottom: 16px; }
-.contact-copy > p { color: var(--muted); }
+.contact-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px, 4vw, 48px); align-items: start; }
+.contact-copy h3 { font-family: var(--font-display); font-size: 20px; margin-bottom: 16px; }
+.contact-tip {
+  margin-top: 16px; padding: 13px 16px;
+  background: var(--surface); border: 1px dashed var(--line);
+  border-radius: var(--r-md);
+  font-size: 13.5px; color: var(--muted);
+}
 
-.contact-cards { margin-top: 26px; display: grid; gap: 10px; }
+.contact-cards { display: grid; gap: 10px; }
+.contact-card-quiet { opacity: .82; }
+.contact-card-quiet:hover { opacity: 1; }
 .contact-card {
   display: flex; align-items: center; gap: 14px;
   background: var(--surface); border: 1px solid var(--line);
@@ -520,8 +664,62 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .foot-nav a:hover, .foot-contact a:hover { color: #fff; }
 .foot-contact { display: grid; gap: 9px; align-content: start; }
 .foot-contact p { font-size: 14.5px; color: rgb(255 255 255 / .5); }
-.foot-bottom { border-top: 1px solid rgb(255 255 255 / .12); padding: 20px 0 24px; }
+
+.foot-legal {
+  border-top: 1px solid rgb(255 255 255 / .12);
+  padding: 20px 0;
+}
+.foot-legal p {
+  font-size: 13px; line-height: 1.6;
+  color: rgb(255 255 255 / .5);
+  max-width: 78ch;
+}
+
+.foot-bottom {
+  border-top: 1px solid rgb(255 255 255 / .12);
+  padding: 18px 0 24px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+}
 .foot-bottom p { font-size: 13px; color: rgb(255 255 255 / .45); }
+.foot-policy { display: flex; gap: 18px; }
+.foot-policy a {
+  font-size: 13px; color: rgb(255 255 255 / .62);
+  text-decoration: none; transition: color .18s;
+}
+.foot-policy a:hover { color: #fff; text-decoration: underline; }
+
+/* ---------- LEGAL PAGES ---------- */
+.legal { padding: clamp(44px, 6vw, 76px) 0 clamp(56px, 7vw, 90px); }
+.legal h1 { font-family: var(--font-display); font-size: clamp(32px, 4.4vw, 48px); margin-bottom: 10px; }
+.legal h2 {
+  font-family: var(--font-display); font-size: clamp(21px, 2.3vw, 26px);
+  margin: 38px 0 12px; padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.legal p { margin-bottom: 14px; color: var(--muted); }
+.legal p a { color: var(--accent-ink); }
+.legal-meta { font-size: 14px; }
+.legal-lead { font-size: 17.5px; color: var(--ink) !important; }
+.legal-list { margin: 0 0 14px; display: grid; gap: 7px; }
+.legal-list li { position: relative; padding-left: 20px; color: var(--muted); }
+.legal-list li::before {
+  content: ""; position: absolute; left: 4px; top: 11px;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+}
+.legal-note {
+  padding: 13px 16px; border-radius: var(--r-md);
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  font-size: 14.5px;
+}
+
+/* Unfilled blanks. Impossible to miss on the page, which is the point —
+   these pages must not go live with any of them left in. */
+.todo {
+  background: #FFE88A; color: #4A3B00;
+  padding: 1px 6px; border-radius: 4px;
+  font-weight: 700; font-size: .92em;
+  box-shadow: inset 0 0 0 1px #E0C44A;
+}
 
 /* ---------- MOBILE CALL BAR ---------- */
 .callbar {
@@ -604,6 +802,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .strip-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
   .cards, .gallery, .steps { grid-template-columns: 1fr; }
   .carousel { --per: 1; }
+  .avail-grid { grid-template-columns: repeat(4, 1fr); }
+  .avail-head { flex-direction: column; gap: 8px; }
+  .cmp-handle::after { width: 34px; height: 34px; margin: -17px 0 0 -17px; background-size: 17px; }
   .areas { grid-template-columns: repeat(2, 1fr); }
   .field-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
