@@ -114,7 +114,18 @@ window.CB_ES = {
   "rev3.q": "Precios honestos y gente verdaderamente amable. Confío en ellos en mi casa aunque no esté, y eso vale todo.",
   "rev3.n": "Dana P.",
   "rev3.m": "Limpieza profunda + mensual",
+  "rev4.q": "Después de la remodelación había polvo en todo. Pasaron un día entero en eso y por fin la casa se sintió terminada.",
+  "rev4.n": "Luis y Carmen A.",
+  "rev4.m": "Después de construcción",
+  "rev5.q": "Las mismas dos personas cada visita, siempre puntuales, y se acuerdan de cómo me gustan las cosas. Por esa constancia seguimos con ellas.",
+  "rev5.n": "Priya N.",
+  "rev5.m": "Limpieza regular · 3 años",
   "rev.more": "Lea más reseñas en Google →",
+
+  /* carousel controls */
+  "carousel.prev": "Reseñas anteriores",
+  "carousel.next": "Siguientes reseñas",
+  "carousel.dot": "Ir a las reseñas {n}",
 
   /* about */
   "about.kicker": "Nosotros",
@@ -198,5 +209,6 @@ window.CB_EN_RUNTIME = {
   "form.sending": "Sending…",
   "form.ok": "Thank you! We'll get back to you shortly.",
   "form.fail": "Couldn't send. Please call or text (555) 123-4567.",
-  "form.handoff": "Opening your messaging app with the request ready to send."
+  "form.handoff": "Opening your messaging app with the request ready to send.",
+  "carousel.dot": "Go to reviews {n}"
 };

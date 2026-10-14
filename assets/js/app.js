@@ -52,6 +52,13 @@ const i18nNodes = [...document.querySelectorAll("[data-i18n]")].map((el) => {
   };
 });
 
+/* Elements whose aria-label needs translating rather than their text. */
+const i18nAria = [...document.querySelectorAll("[data-i18n-aria]")].map((el) => ({
+  el,
+  key: el.dataset.i18nAria,
+  en: el.getAttribute("aria-label") || ""
+}));
+
 let lang = "en";
 
 function setLang(next) {
@@ -71,11 +78,18 @@ function setLang(next) {
     }
   });
 
+  i18nAria.forEach((n) => {
+    n.el.setAttribute("aria-label", lang === "es" ? ES[n.key] || n.en : n.en);
+  });
+
   document.querySelectorAll(".lang-opt").forEach((o) => {
     o.classList.toggle("is-on", o.dataset.lang === lang);
   });
 
   try { localStorage.setItem("cb-lang", lang); } catch (e) { /* private mode */ }
+
+  /* Anything built by script (the carousel dots) relabels itself here. */
+  document.dispatchEvent(new CustomEvent("cb:langchange", { detail: { lang } }));
 }
 
 function t(key) {
@@ -98,19 +112,36 @@ document.getElementById("langToggle")?.addEventListener("click", () => {
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const revealables = document.querySelectorAll(".reveal");
 
+/* Reveals are two-way: an element animates in when it enters the viewport
+   from either direction, and resets once it has fully left, so scrolling
+   back up replays the animation instead of showing static content.
+   Counters are the exception — they only ever tick up once. */
+const counted = new WeakSet();
+
 if (reduceMotion || !("IntersectionObserver" in window)) {
   revealables.forEach((el) => el.classList.add("is-in"));
 } else {
   const revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-in");
-        revealObserver.unobserve(entry.target);
-        if (entry.target.classList.contains("stat")) countUp(entry.target);
+        const el = entry.target;
+
+        if (entry.intersectionRatio >= 0.1) {
+          el.classList.remove("is-above");
+          el.classList.add("is-in");
+          if (el.classList.contains("stat") && !counted.has(el)) {
+            counted.add(el);
+            countUp(el);
+          }
+        } else if (!entry.isIntersecting) {
+          /* Fully out of frame. Reset, and aim the travel at the edge it
+             will come back through: above the fold means it drops in. */
+          el.classList.remove("is-in");
+          el.classList.toggle("is-above", entry.boundingClientRect.top < 0);
+        }
       });
     },
-    { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+    { threshold: [0, 0.1], rootMargin: "-2% 0px -8% 0px" }
   );
   revealables.forEach((el) => revealObserver.observe(el));
 }
@@ -265,28 +296,107 @@ form?.addEventListener("submit", async (e) => {
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-/* ══════════════════════════════════════════════════════════════
-   PALETTE PREVIEW SWITCHER — temporary.
-   Delete this block, the .palette-switch CSS, and the matching
-   markup in index.html once a palette is chosen.
-   ══════════════════════════════════════════════════════════════ */
-(function palettePreview() {
-  const box = document.getElementById("paletteSwitch");
-  if (!box) return;
+/* ─────────────────────────────────────────────────────────────
+   6. Carousel
 
-  const fromUrl = new URLSearchParams(location.search).get("palette");
-  let saved = null;
-  try { saved = localStorage.getItem("cb-palette"); } catch (e) { /* ignore */ }
+   Drives any .carousel on the page. Everything is read from the DOM,
+   so adding or removing cards needs no code change: add a card and the
+   dots and arrows adjust themselves. Nothing moves on its own — it only
+   advances when someone clicks an arrow or a dot, presses an arrow key,
+   or swipes.
+   ───────────────────────────────────────────────────────────── */
+function initCarousel(root) {
+  const rail = root.querySelector(".rail");
+  const dotsBox = root.querySelector(".dots");
+  const arrows = [...root.querySelectorAll(".arrow")];
+  const slides = [...rail.children];
+  if (!slides.length) return;
 
-  function set(name) {
-    document.documentElement.dataset.palette = name;
-    box.querySelectorAll("button").forEach((b) => b.classList.toggle("is-on", b.dataset.set === name));
-    try { localStorage.setItem("cb-palette", name); } catch (e) { /* ignore */ }
+  let perView = 1;
+  let pages = 1;
+  let page = 0;
+
+  /* Distance from one card's left edge to the next, gap included. */
+  function step() {
+    if (slides.length < 2) return slides[0].getBoundingClientRect().width;
+    return slides[1].getBoundingClientRect().left - slides[0].getBoundingClientRect().left;
   }
 
-  set(fromUrl || saved || "warm");
-  box.addEventListener("click", (e) => {
-    const b = e.target.closest("button[data-set]");
-    if (b) set(b.dataset.set);
+  function measure() {
+    const s = step();
+    perView = s > 0 ? Math.max(1, Math.round(rail.clientWidth / s)) : 1;
+    pages = Math.max(1, Math.ceil(slides.length / perView));
+    root.dataset.static = String(slides.length <= perView);
+    arrows.forEach((a) => (a.disabled = pages < 2));
+  }
+
+  function drawDots() {
+    if (!dotsBox) return;
+    dotsBox.textContent = "";
+    if (pages < 2) return;
+    for (let i = 0; i < pages; i++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", String(i === page));
+      b.setAttribute("aria-label", t("carousel.dot").replace("{n}", String(i + 1)));
+      b.addEventListener("click", () => goTo(i));
+      dotsBox.appendChild(b);
+    }
+  }
+
+  function syncDots() {
+    if (!dotsBox) return;
+    [...dotsBox.children].forEach((b, i) => b.setAttribute("aria-selected", String(i === page)));
+  }
+
+  function goTo(next) {
+    /* Wraps around, so the arrows keep cycling at either end. */
+    page = ((next % pages) + pages) % pages;
+    rail.scrollTo({ left: page * perView * step(), behavior: reduceMotion ? "auto" : "smooth" });
+    syncDots();
+  }
+
+  function readPage() {
+    const s = step() * perView;
+    if (s <= 0) return;
+    const atEnd = rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 2;
+    const next = atEnd ? pages - 1 : Math.round(rail.scrollLeft / s);
+    if (next !== page) {
+      page = next;
+      syncDots();
+    }
+  }
+
+  arrows.forEach((a) => a.addEventListener("click", () => goTo(page + Number(a.dataset.dir))));
+
+  rail.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); goTo(page + 1); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); goTo(page - 1); }
   });
-})();
+
+  /* Keep the dots honest when someone swipes or drags instead. */
+  let scrollTimer;
+  rail.addEventListener("scroll", () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(readPage, 90);
+  }, { passive: true });
+
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const wasOn = page;
+      measure();
+      drawDots();
+      goTo(Math.min(wasOn, pages - 1));
+    }, 150);
+  });
+
+  document.addEventListener("cb:langchange", drawDots);
+
+  measure();
+  drawDots();
+}
+
+document.querySelectorAll(".carousel").forEach(initCarousel);

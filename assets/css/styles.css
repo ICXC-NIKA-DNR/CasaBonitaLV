@@ -1,43 +1,30 @@
 /* ============================================================
    Casa Bonita LLC — styles.css
-   Plain CSS, no build step. Two palettes live side by side so
-   you can compare; once you pick one, see the note at the top
-   of the PALETTES block for how to delete the other.
+   Plain CSS, no build step. All colours and both font stacks are
+   variables in the block below — change them there, not inline.
    ============================================================ */
 
-/* ---------- PALETTES -------------------------------------------------
-   The <html> tag carries data-palette="warm" or "fresh".
-   To lock one in: keep its block, delete the other, and remove the
-   [data-palette=...] selector so the vars sit on plain :root.
+/* ---------- PALETTE --------------------------------------------------
+   Every colour in the site comes from these variables. Change one here
+   and it updates everywhere — nothing below hard-codes a colour except
+   the star gold and the error red.
+
+   --accent-glow and --shadow are raw "R G B" triples (no commas, no
+   rgb()) because they get used inside rgb(... / alpha) for soft shadows.
 --------------------------------------------------------------------- */
 
-:root,
-[data-palette="warm"] {
-  --bg:          #FBF8F4;
-  --bg-alt:      #F4EEE6;
-  --surface:     #FFFFFF;
-  --ink:         #1D1A16;
-  --muted:       #6E6456;
-  --line:        #E7DFD3;
-  --accent:      #B4653A;
-  --accent-ink:  #8E4C28;
-  --accent-soft: #F6E8DC;
+:root {
+  --bg:          #FBF8F4;  /* page background, warm off-white */
+  --bg-alt:      #F4EEE6;  /* alternating section background */
+  --surface:     #FFFFFF;  /* cards, form, header pills */
+  --ink:         #1D1A16;  /* body text, footer background */
+  --muted:       #6E6456;  /* secondary text */
+  --line:        #E7DFD3;  /* borders and dividers */
+  --accent:      #B4653A;  /* terracotta — buttons, icons, highlights */
+  --accent-ink:  #8E4C28;  /* darker accent for text on light ground */
+  --accent-soft: #F6E8DC;  /* accent tint behind icons and the eyebrow */
   --accent-glow: 180 101 58;
   --shadow:      14 10 4;
-}
-
-[data-palette="fresh"] {
-  --bg:          #F7FAFA;
-  --bg-alt:      #ECF4F4;
-  --surface:     #FFFFFF;
-  --ink:         #0F1E20;
-  --muted:       #5A6E70;
-  --line:        #DCE8E8;
-  --accent:      #0E8A80;
-  --accent-ink:  #0A6E66;
-  --accent-soft: #DBF0ED;
-  --accent-glow: 14 138 128;
-  --shadow:      4 20 20;
 }
 
 :root {
@@ -51,11 +38,6 @@
 
   --pad-section: clamp(64px, 9vw, 116px);
   --ease: cubic-bezier(.22, .68, .3, 1);
-}
-
-[data-palette="fresh"] {
-  /* The fresh palette reads better with a sans display face. */
-  --font-display: var(--font-body);
 }
 
 /* ---------- RESET ---------- */
@@ -212,7 +194,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   margin-bottom: 20px;
 }
 .hero h1 em { font-style: italic; color: var(--accent); }
-[data-palette="fresh"] .hero h1 em { font-style: normal; }
 
 .lede { font-size: clamp(17px, 1.6vw, 19.5px); color: var(--muted); max-width: 52ch; margin-bottom: 30px; }
 
@@ -335,14 +316,82 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: linear-gradient(transparent, rgb(0 0 0 / .62));
 }
 
-/* ---------- REVIEWS ---------- */
-.reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+/* ---------- REVIEWS CAROUSEL ----------
+   The rail is a plain horizontal scroller with scroll snapping, so it
+   swipes natively on a phone and the arrow buttons just scroll it.
+   --per is how many cards are visible at once; the JS reads it to work
+   out how far one click should travel and how many dots to draw.
+--------------------------------------- */
+.carousel { --per: 3; --rail-gap: 18px; position: relative; }
+
+.rail {
+  display: flex;
+  gap: var(--rail-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* Room for the cards' hover lift and shadow, without clipping them. */
+  padding: 6px 0 18px;
+  margin: -6px 0 -18px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail:focus-visible { outline-offset: 6px; }
+
 .quote {
+  flex: 0 0 calc((100% - (var(--per) - 1) * var(--rail-gap)) / var(--per));
+  scroll-snap-align: start;
   margin: 0; background: var(--surface);
   border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 26px;
   display: flex; flex-direction: column; gap: 14px;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s;
 }
+.quote:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  box-shadow: 0 24px 44px -32px rgb(var(--shadow) / .6);
+}
+
+.carousel-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-top: 24px;
+}
+
+.dots { display: flex; gap: 8px; }
+.dots button {
+  width: 8px; height: 8px; padding: 0;
+  border: none; border-radius: 50%;
+  background: var(--line); cursor: pointer;
+  transition: background .25s, width .25s var(--ease);
+}
+.dots button:hover { background: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.dots button[aria-selected="true"] { width: 24px; border-radius: 999px; background: var(--accent); }
+
+.arrows { display: flex; gap: 10px; margin-left: auto; }
+.arrow {
+  width: 44px; height: 44px; flex: none;
+  display: grid; place-items: center;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 10px 22px -18px rgb(var(--shadow) / .7);
+  transition: transform .2s var(--ease), border-color .2s, color .2s, box-shadow .2s, opacity .2s;
+}
+.arrow svg { width: 19px; height: 19px; }
+.arrow:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px -18px rgb(var(--shadow) / .8);
+}
+.arrow:active { transform: translateY(0); }
+.arrow[disabled] { opacity: .35; pointer-events: none; }
+
+/* With few enough reviews to fit on screen, the controls are noise. */
+.carousel[data-static="true"] .carousel-controls { display: none; }
+.carousel[data-static="true"] .rail { overflow-x: visible; }
 .quote blockquote { margin: 0; font-size: 16px; color: var(--ink); }
 .quote figcaption { margin-top: auto; padding-top: 6px; display: grid; gap: 1px; }
 .quote figcaption strong { font-size: 15px; }
@@ -487,39 +536,31 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .callbar.is-up { transform: translateY(0); }
 
-/* ---------- SCROLL REVEALS ---------- */
+/* ---------- SCROLL REVEALS ----------
+   Reveals run in both directions: an element fades out once it leaves
+   the viewport and plays again on the way back. `.is-above` flips the
+   travel direction so something re-entering from the top drops down
+   into place instead of rising up through the edge of the screen.
+------------------------------------- */
 .reveal {
   opacity: 0;
   transform: translateY(22px);
   transition: opacity .7s var(--ease), transform .7s var(--ease);
   transition-delay: calc(var(--d, 0) * 90ms);
 }
+.reveal.is-above { transform: translateY(-22px); }
 .reveal.is-in { opacity: 1; transform: none; }
 .reveal[data-d="1"] { --d: 1; }
 .reveal[data-d="2"] { --d: 2; }
 .reveal[data-d="3"] { --d: 3; }
 .reveal[data-d="4"] { --d: 4; }
 
-/* ---------- PALETTE PREVIEW SWITCHER (delete after choosing) ---------- */
-.palette-switch {
-  position: fixed; right: 16px; bottom: 16px; z-index: 120;
-  display: flex; align-items: center; gap: 6px;
-  background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: 6px 8px 6px 14px;
-  box-shadow: 0 16px 34px -20px rgb(0 0 0 / .4);
-  font-size: 12.5px; color: var(--muted);
-}
-.palette-switch button {
-  background: transparent; border: 1px solid var(--line); border-radius: 999px;
-  padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer;
-}
-.palette-switch button.is-on { background: var(--accent); color: #fff; border-color: var(--accent); }
-
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 1000px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-media { max-width: 520px; }
-  .cards, .gallery, .reviews { grid-template-columns: repeat(2, 1fr); }
+  .cards, .gallery { grid-template-columns: repeat(2, 1fr); }
+  .carousel { --per: 2; }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .about-grid, .contact-grid { grid-template-columns: 1fr; }
   .about-photo { max-width: 460px; }
@@ -550,13 +591,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
   body { font-size: 16.5px; }
   .wrap { width: min(100% - 32px, var(--wrap)); }
   .strip-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
-  .cards, .gallery, .reviews, .steps { grid-template-columns: 1fr; }
+  .cards, .gallery, .steps { grid-template-columns: 1fr; }
+  .carousel { --per: 1; }
   .areas { grid-template-columns: repeat(2, 1fr); }
   .field-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
   .hero-badge { left: 10px; bottom: -14px; }
   .hero-cta .btn { flex: 1 1 100%; }
-  .palette-switch { bottom: 78px; right: 10px; font-size: 11.5px; padding: 5px 6px 5px 11px; }
 }
 
 /* Narrow phones: the header has to fit brand + language + call + menu. */
@@ -571,13 +612,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ---------- MOTION / PRINT ---------- */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html, .rail { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
 @media print {
-  .site-header, .callbar, .palette-switch, .hero-glow, .quote-form { display: none !important; }
+  .site-header, .callbar, .hero-glow, .quote-form, .carousel-controls { display: none !important; }
+  .rail { display: grid; grid-template-columns: repeat(2, 1fr); overflow: visible; }
   .reveal { opacity: 1; transform: none; }
   body { background: #fff; }
 }

@@ -59,20 +59,31 @@ extension. There are 8 of them; search for `placeholder-`.
 
 ## 3. Reviews
 
-Three review slots in `index.html` → `<section id="reviews">`. For each one you
-need: the quote, a first name + last initial, and what service they got.
+Five placeholder reviews live in `index.html` → `<section id="reviews">`, inside
+`<div class="rail">`. For each one you need: the quote, a first name + last
+initial, and what service they got.
 
-The Spanish versions are in `assets/js/i18n.js` under `rev1.q`, `rev2.q`, `rev3.q`.
-If a review was written in English, it's honest to leave the Spanish side as a
-translation — just make sure it says the same thing.
+The carousel counts itself, so you can have any number:
 
-**Only use real reviews.** If she has a Google Business profile, the "Read more
-reviews on Google →" link near the bottom of that section needs her real Google
-link — right now it points nowhere (`href="#"`).
+- **To add one** — copy a whole `<figure class="quote">…</figure>` block, paste
+  it after the last one, and edit the text. Give it the next number
+  (`rev6.q`, `rev6.n`, `rev6.m`) in its `data-i18n` attributes.
+- **To remove one** — delete the whole `<figure>` block.
 
-If she doesn't have three reviews yet, delete the extra `<figure class="quote">`
-blocks. Two real reviews beat three invented ones, and invented ones are the
-kind of thing that gets a business in trouble.
+The dots and arrows renumber themselves either way. If you end up with three or
+fewer, the arrows and dots disappear on their own and it becomes a plain row.
+
+Spanish versions go in `assets/js/i18n.js` under `rev1.q` … `rev5.q`. If a
+review was written in English, it's honest to show a translation on the Spanish
+side — just make sure it says the same thing.
+
+**Only use real reviews.** All five here are invented filler. Two real reviews
+beat five invented ones, and invented ones are the kind of thing that gets a
+business in trouble.
+
+If she has a Google Business profile, the "Read more reviews on Google →" link
+below the carousel needs her real Google link — right now it points nowhere
+(`href="#"`).
 
 ---
 
@@ -111,4 +122,3 @@ These are currently invented and **must** be checked before launch:
 - [ ] The two stat numbers confirmed
 - [ ] `<link rel="canonical">` and `og:url` in `index.html` point at the real address
 - [ ] Spanish side proofread by her (machine-assisted Spanish is a good start, not a finish)
-- [ ] Palette picked, and the palette switcher deleted (see `README.md`)

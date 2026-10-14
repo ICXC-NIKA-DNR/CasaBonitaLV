@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-palette="warm">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -240,23 +240,63 @@
       <p class="kicker" data-i18n="rev.kicker">Reviews</p>
       <h2 data-i18n="rev.h2">What neighbors say</h2>
     </header>
-    <div class="reviews">
-      <figure class="quote reveal">
-        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
-        <blockquote data-i18n="rev1.q">They were on time, careful with my things, and the kitchen looked better than the day I moved in. We've had them every two weeks since.</blockquote>
-        <figcaption><strong data-i18n="rev1.n">Maria R.</strong><span data-i18n="rev1.m">Recurring clean · 2 years</span></figcaption>
-      </figure>
-      <figure class="quote reveal" data-d="1">
-        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
-        <blockquote data-i18n="rev2.q">We needed a move-out clean in two days and they made it happen. Landlord returned the full deposit without a single note.</blockquote>
-        <figcaption><strong data-i18n="rev2.n">James T.</strong><span data-i18n="rev2.m">Move-out clean</span></figcaption>
-      </figure>
-      <figure class="quote reveal" data-d="2">
-        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
-        <blockquote data-i18n="rev3.q">Honest pricing and genuinely kind people. I trust them in my home when I'm not there, and that's worth everything.</blockquote>
-        <figcaption><strong data-i18n="rev3.n">Dana P.</strong><span data-i18n="rev3.m">Deep clean + monthly</span></figcaption>
-      </figure>
+    <!-- ── Reviews carousel ─────────────────────────────────────────
+         To add a review: copy one <figure class="quote"> block and edit it.
+         The arrows and the dots below count themselves — nothing else
+         needs changing, at any number of reviews.
+         ─────────────────────────────────────────────────────────── -->
+    <div class="carousel reveal" id="reviewCarousel">
+      <div class="rail" id="reviewRail" tabindex="0" role="group"
+           aria-roledescription="carousel" aria-label="Customer reviews">
+
+        <figure class="quote">
+          <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote data-i18n="rev1.q">They were on time, careful with my things, and the kitchen looked better than the day I moved in. We've had them every two weeks since.</blockquote>
+          <figcaption><strong data-i18n="rev1.n">Maria R.</strong><span data-i18n="rev1.m">Recurring clean · 2 years</span></figcaption>
+        </figure>
+
+        <figure class="quote">
+          <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote data-i18n="rev2.q">We needed a move-out clean in two days and they made it happen. Landlord returned the full deposit without a single note.</blockquote>
+          <figcaption><strong data-i18n="rev2.n">James T.</strong><span data-i18n="rev2.m">Move-out clean</span></figcaption>
+        </figure>
+
+        <figure class="quote">
+          <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote data-i18n="rev3.q">Honest pricing and genuinely kind people. I trust them in my home when I'm not there, and that's worth everything.</blockquote>
+          <figcaption><strong data-i18n="rev3.n">Dana P.</strong><span data-i18n="rev3.m">Deep clean + monthly</span></figcaption>
+        </figure>
+
+        <figure class="quote">
+          <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote data-i18n="rev4.q">After our remodel the dust was in everything. They spent a full day on it and the house finally felt finished.</blockquote>
+          <figcaption><strong data-i18n="rev4.n">Luis &amp; Carmen A.</strong><span data-i18n="rev4.m">Post-construction</span></figcaption>
+        </figure>
+
+        <figure class="quote">
+          <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote data-i18n="rev5.q">Same two people every visit, always on time, and they remember how I like things. That consistency is why we stay.</blockquote>
+          <figcaption><strong data-i18n="rev5.n">Priya N.</strong><span data-i18n="rev5.m">Recurring clean · 3 years</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="carousel-controls">
+        <div class="dots" id="reviewDots" role="tablist" aria-label="Review pages"></div>
+        <div class="arrows">
+          <button class="arrow" type="button" data-dir="-1"
+                  aria-controls="reviewRail" aria-label="Previous reviews"
+                  data-i18n-aria="carousel.prev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>
+          </button>
+          <button class="arrow" type="button" data-dir="1"
+                  aria-controls="reviewRail" aria-label="Next reviews"
+                  data-i18n-aria="carousel.next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5 7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
+
     <p class="reviews-cta reveal">
       <a class="link-arrow" href="#" data-i18n="rev.more">Read more reviews on Google →</a>
     </p>
@@ -437,16 +477,6 @@
 <!-- Sticky mobile call bar -->
 <div class="callbar">
   <a class="btn btn-primary btn-block" href="tel:+15551234567" data-i18n="cta.callNow">Call for a free quote</a>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════════
-     PALETTE PREVIEW SWITCHER — temporary, for choosing a look.
-     Delete this block and the matching CSS/JS once a palette is picked.
-     ══════════════════════════════════════════════════════════════ -->
-<div class="palette-switch" id="paletteSwitch">
-  <span>Palette preview</span>
-  <button type="button" data-set="warm" class="is-on">Warm</button>
-  <button type="button" data-set="fresh">Fresh</button>
 </div>
 
 <script src="assets/js/i18n.js" defer></script>

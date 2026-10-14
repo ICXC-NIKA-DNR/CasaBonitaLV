@@ -5,7 +5,7 @@ Three files do all the work. No build step, no npm, no framework.
 
 ```
 index.html              all the content and structure
-assets/css/styles.css   all the styling, including both palettes
+assets/css/styles.css   all the styling; colours and fonts are variables at the top
 assets/js/i18n.js       the Spanish translations
 assets/js/app.js        scroll animations, language toggle, the quote form
 assets/img/             placeholder images (swap these for real photos)
@@ -30,23 +30,43 @@ local server matches how GitHub Pages will serve it.)
 
 ---
 
-## Picking a palette
+## Colours and fonts
 
-The site ships with two complete looks. A temporary switcher sits in the
-bottom-right corner so you can compare them on the real page:
+The look is **warm**: off-white ground, terracotta accent, serif headings.
 
-- **Warm** — off-white, terracotta, serif headings. Reads "home".
-- **Fresh** — cool white, teal, sans headings. Reads "clean".
+Every colour comes from the variable block at the top of
+`assets/css/styles.css`. Nothing below it hard-codes a colour except the star
+gold and the form's error red. Change `--accent` and the buttons, icons,
+section labels, prices, links, and focus rings all move together.
 
-You can also force one with a URL: `?palette=warm` or `?palette=fresh`.
+```css
+:root {
+  --bg:          #FBF8F4;   /* page background        */
+  --bg-alt:      #F4EEE6;   /* alternating sections   */
+  --accent:      #B4653A;   /* terracotta             */
+  --accent-ink:  #8E4C28;   /* darker, for text       */
+  --accent-soft: #F6E8DC;   /* tint behind icons      */
+  --accent-glow: 180 101 58;  /* same accent as "R G B", for soft shadows */
+  ...
+}
+```
 
-**Once you've chosen**, lock it in — three deletions:
+If you change `--accent`, change `--accent-ink` (darker), `--accent-soft`
+(much lighter), and `--accent-glow` (the same colour written as three numbers)
+to match, or the shadows and tints will drift out of step.
 
-1. `index.html` — delete the `<div class="palette-switch">…</div>` block near
-   the bottom, and set `data-palette="…"` on the `<html>` tag to your choice.
-2. `assets/css/styles.css` — delete the losing palette's `[data-palette="…"]`
-   block and the `.palette-switch` rules.
-3. `assets/js/app.js` — delete the `palettePreview()` block at the bottom.
+**Fonts** are two variables in the same block:
+
+```css
+--font-display: "Fraunces", "Iowan Old Style", Georgia, serif;  /* headings */
+--font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", …;  /* everything else */
+```
+
+To try a different heading face, swap the Google Fonts `<link>` near the top of
+`index.html` and change the first name in `--font-display`. Always leave a real
+fallback after it so the page still looks right before the font loads. The body
+font is the visitor's own system font — no download, which is most of why the
+site is fast.
 
 ---
 
@@ -109,6 +129,26 @@ Nothing here is GitHub-specific. The whole folder is plain files, so it drops
 onto Netlify, Cloudflare Pages, Vercel, or ordinary web hosting by upload —
 drag the folder in and it works. That's the main reason the site has no build
 step: there's nothing to get stranded on.
+
+---
+
+## The reviews carousel
+
+The reviews sit in a manual carousel — it never moves on its own. Arrows, dots,
+arrow keys, and swipe all work, and it wraps around at both ends.
+
+**It counts itself.** To add a review, copy one `<figure class="quote">` block
+inside `<div class="rail">` and edit the text. The dots renumber, the arrows
+recalculate, and nothing else needs touching. Three cards show at a time on a
+desktop, two on a tablet, one on a phone; if you end up with fewer reviews than
+fit on screen, the arrows and dots hide themselves automatically.
+
+To change how many show at once, edit `--per` in the `.carousel` rules in
+`styles.css` (and in the two media queries below it).
+
+The same markup works for any other section you'd want to make scrollable
+later — give a wrapper `class="carousel"`, put the cards in a `.rail` inside it,
+and the script picks it up.
 
 ---
 
