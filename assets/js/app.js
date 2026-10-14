@@ -116,11 +116,13 @@ const revealables = document.querySelectorAll(".reveal");
    line near the bottom of the screen, and backwards as it sinks below
    that line again on the way up.
 
-   The rootMargin does the work. The bottom edge is pulled up 10% to make
-   the trigger line, and the top edge is pushed far up the page so that
-   scrolling *past* something never un-reveals it — only the bottom of
-   the screen ever hides anything, which is what makes it read as a
-   straight reversal of the scroll.
+   The rootMargin does the work. The bottom edge is pulled up 22% to make
+   the trigger line — high enough that the fade-out finishes well before
+   the element reaches the bottom of the screen, so you actually see it
+   happen. The top edge is pushed far up the page so that scrolling
+   *past* something never un-reveals it: things leaving by the top just
+   scroll away and scroll back, and only the bottom of the screen ever
+   fades anything in or out.
 
    Counters are the exception: they tick up once and stay put. */
 const counted = new WeakSet();
@@ -140,7 +142,7 @@ if (reduceMotion || !("IntersectionObserver" in window)) {
         }
       });
     },
-    { threshold: 0, rootMargin: "9999px 0px -10% 0px" }
+    { threshold: 0, rootMargin: "9999px 0px -22% 0px" }
   );
   revealables.forEach((el) => revealObserver.observe(el));
 }

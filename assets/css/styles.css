@@ -548,11 +548,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .reveal {
   opacity: 0;
   transform: translateY(22px);
-  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  /* The hidden state is the target when scrolling up, so this is the
+     speed of the fade-out: quicker than the entrance, so it finishes
+     while the element is still on screen. */
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
 }
 .reveal.is-in {
   opacity: 1;
   transform: none;
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
   transition-delay: calc(var(--d, 0) * 90ms);
 }
 .reveal[data-d="1"] { --d: 1; }
