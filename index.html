@@ -604,7 +604,13 @@
   "telephone": "+1-555-123-4567",
   "email": "hello@casabonita.example",
   "priceRange": "$$",
-  "areaServed": ["Your City", "Neighboring Town"],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Las Vegas",
+    "addressRegion": "NV",
+    "addressCountry": "US"
+  },
+  "areaServed": { "@type": "City", "name": "Las Vegas", "containedInPlace": { "@type": "State", "name": "Nevada" } },
   "openingHours": "Mo-Sa 08:00-18:00"
 }
 </script>

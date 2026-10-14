@@ -170,20 +170,28 @@ registered company rather than cash-in-hand work.
 
 `privacy.html` and `terms.html` are **drafts written in plain language, not
 legal advice.** Every blank that still needs filling is marked in bright yellow
-on the page, so open both in a browser and look for the highlights:
+on the page, so open both in a browser and look for the highlights.
 
-- The date at the top of each
-- City and state
-- How long quote requests are kept
-- Cancellation notice period and late-cancellation fee
-- Accepted payment methods
-- The damage reporting window
-- Governing state
+Location is filled in: Las Vegas, Nevada, with Clark County named as the venue
+for disputes. What's left is the stuff only she can decide:
 
-**Have a lawyer read `terms.html` before it goes live.** The damage and
+| Blank | Page | What it needs |
+|---|---|---|
+| `[DATE]` | both | The day you publish them for real |
+| `[12 months]` | privacy | How long to keep quote requests you didn't take |
+| `[24 hours]` | terms | Free-cancellation notice period |
+| `[a $__ fee / 50%]` | terms | What a late cancellation costs, if anything |
+| `[cash, check, …]` | terms | Which of those she actually accepts |
+| `[48 hours]` | terms | Window for reporting damage |
+
+**Have a Nevada lawyer read `terms.html` before it goes live.** The damage and
 "what we don't do" sections are the ones that actually matter if something
-goes wrong, and template wording is not a substitute for someone who knows the
-rules in her state. A one-off consultation is cheap next to a dispute.
+goes wrong, and template wording is not a substitute for someone who knows
+Nevada's rules. A one-off consultation is cheap next to a dispute.
+
+The privacy policy now cites NRS Chapter 603A, Nevada's do-not-sell right. It's
+accurate as written — we say we don't sell anything, which is true — but it's
+another line worth having confirmed.
 
 The privacy policy is lower risk — it mostly describes what the site genuinely
 does, which right now is very little. Two things would make it wrong, so update
