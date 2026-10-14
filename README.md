@@ -108,11 +108,11 @@ Same approach as the math site.
 2. Push:
 
 ```bash
-cd ~/Claude/casa-bonita && git add -A && git commit -m "Casa Bonita site" && git branch -M main && git remote add origin https://github.com/USER/REPO.git && git push -u origin main
+cd ~/Claude/casa-bonita && git add -A && git commit -m "Casa Bonita site" && git branch -M main && git remote add origin https://github.com/ICXC-NIKA-DNR/CasaBonitaLV.git && git push -u origin main
 ```
 
 3. On GitHub: **Settings → Pages → Source: Deploy from a branch → `main` / `/ (root)`**.
-4. It goes live at `https://USER.github.io/REPO/` in a minute or two.
+4. It goes live at `https://icxc-nika-dnr.github.io/CasaBonitaLV/` in a minute or two.
 
 `.nojekyll` is already in the repo so GitHub serves the files as-is.
 

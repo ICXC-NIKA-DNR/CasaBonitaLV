@@ -203,6 +203,19 @@ final.
 
 ## 7. Before going live
 
+**The site is currently hidden from Google.** All three pages carry a
+`<meta name="robots" content="noindex, nofollow">` line marked
+`DRAFT ONLY — REMOVE THIS LINE BEFORE LAUNCH`. That keeps the draft — with its
+fake phone number and five invented reviews — out of search results.
+
+It is the **last** thing to remove, after everything below is done:
+
+```bash
+cd ~/Claude/casa-bonita && grep -rn "noindex" *.html
+```
+
+Delete those three `<meta>` lines (and the comment above each), then `git ship`.
+
 - [ ] Every `(555)` and `example` string is gone (`grep -rn '555\|example' . --exclude-dir=.git`)
 - [ ] No yellow `[BLANKS]` left on `privacy.html` or `terms.html`
 - [ ] A lawyer has read `terms.html`
