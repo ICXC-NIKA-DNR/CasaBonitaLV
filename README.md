@@ -132,6 +132,38 @@ step: there's nothing to get stranded on.
 
 ---
 
+## The scroll animation
+
+The reveals are **scrubbed, not timed**. Each element's progress through the
+animation is a number from 0 to 1 derived from where it currently sits on
+screen, recalculated every frame while the page scrolls. Scrolling down plays it
+forward; scrolling up plays the same frames backward. Scroll fast and it plays
+fast — there's no clock to outrun, which is the whole point: a timed animation
+loses the race when the element leaves the screen before the timer ends.
+
+Three numbers at the top of the reveal section in `assets/js/app.js`:
+
+```js
+const FADE_START = 0.95;   // share of screen height where the fade begins
+const FADE_END   = 0.62;   // ...and where it's complete
+const STAGGER_PX = 36;     // how far apart cascading items are, in pixels
+```
+
+Widen the gap between `FADE_START` and `FADE_END` for a slower, longer fade;
+narrow it for a snappier one. Raise `STAGGER_PX` for a more pronounced cascade
+across a row of cards.
+
+Two things deliberately don't scrub: anything on the **first screen** (it would
+be stranded part-faded, since you can't scroll above the top of the page) and
+anything too close to the **bottom** for the page to finish the fade. Those are
+pinned fully visible and get their entrance from the one-time intro animation
+that plays on load. The `.intro` class on `<body>` drives that, and the script
+removes it after 1.4s.
+
+Under `prefers-reduced-motion` none of this runs — everything is simply visible.
+
+---
+
 ## The reviews carousel
 
 The reviews sit in a manual carousel — it never moves on its own. Arrows, dots,

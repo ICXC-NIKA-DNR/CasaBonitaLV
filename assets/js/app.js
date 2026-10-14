@@ -112,39 +112,117 @@ document.getElementById("langToggle")?.addEventListener("click", () => {
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const revealables = document.querySelectorAll(".reveal");
 
-/* The reveal is reversible: it plays forwards as an element rises past a
-   line near the bottom of the screen, and backwards as it sinks below
-   that line again on the way up.
+/* The reveal is scrubbed, not timed. Each element gets a --p from 0 to 1
+   based purely on where it currently sits on screen, recalculated every
+   animation frame while the page is scrolling.
 
-   The rootMargin does the work. The bottom edge is pulled up 22% to make
-   the trigger line — high enough that the fade-out finishes well before
-   the element reaches the bottom of the screen, so you actually see it
-   happen. The top edge is pushed far up the page so that scrolling
-   *past* something never un-reveals it: things leaving by the top just
-   scroll away and scroll back, and only the bottom of the screen ever
-   fades anything in or out.
+   That is what makes scrolling up a real undo: the same frames, in
+   reverse, at whatever speed you move. A timed animation can be outrun —
+   scroll fast enough and the element leaves the screen before the clock
+   finishes. Position-driven animation can't be, because there is no
+   clock. Fast scrolling just plays it fast.
 
-   Counters are the exception: they tick up once and stay put. */
+   An element is hidden at FADE_START (just below the bottom of the
+   screen's useful area), fully revealed by FADE_END, and holds at 1
+   above that — so passing something by the top never undoes it. Only
+   the bottom of the screen fades anything, in either direction. */
+const FADE_START = 0.95;   /* share of viewport height: --p hits 0 here */
+const FADE_END   = 0.62;   /* ...and 1 here */
+const STAGGER_PX = 36;     /* extra travel per data-d step, for the cascade */
+
 const counted = new WeakSet();
 
-if (reduceMotion || !("IntersectionObserver" in window)) {
-  revealables.forEach((el) => el.classList.add("is-in"));
+if (reduceMotion) {
+  revealables.forEach((el) => el.style.setProperty("--p", "1"));
 } else {
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const el = entry.target;
-        el.classList.toggle("is-in", entry.isIntersecting);
+  const items = [...revealables].map((el) => ({
+    el,
+    top: 0,
+    p: -1,
+    off: Number(el.dataset.d || 0) * STAGGER_PX,
+    isStat: el.classList.contains("stat")
+  }));
 
-        if (entry.isIntersecting && el.classList.contains("stat") && !counted.has(el)) {
-          counted.add(el);
-          countUp(el);
-        }
-      });
-    },
-    { threshold: 0, rootMargin: "9999px 0px -22% 0px" }
-  );
-  revealables.forEach((el) => revealObserver.observe(el));
+  let p0 = 0;
+  let band = 1;
+
+  /* Document-space offsets are cached so the per-frame loop never reads
+     layout — it only does arithmetic and writes a custom property. */
+  function measure() {
+    const sy = window.scrollY;
+    const vh = window.innerHeight;
+    p0 = vh * FADE_START;
+    band = Math.max(1, vh * (FADE_START - FADE_END));
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
+
+    items.forEach((it) => {
+      it.top = it.el.getBoundingClientRect().top + sy;
+
+      /* Two cases where scrubbing can't work, because the page doesn't
+         have the scroll range to run the animation through: anything on
+         the first screen, which is already in view before a single pixel
+         of scrolling, and anything so near the bottom that the page runs
+         out before the fade finishes. Either would sit stranded at a
+         partial opacity forever. Both are pinned fully visible instead,
+         and get their entrance from the intro animation. */
+      it.pin =
+        it.top < vh ||
+        it.top + it.off - vh * FADE_END > maxScroll;
+    });
+  }
+
+  function paint() {
+    frameQueued = false;
+    const sy = window.scrollY;
+
+    for (const it of items) {
+      const raw = it.pin ? 1 : (p0 - it.off - (it.top - sy)) / band;
+      const p = raw < 0 ? 0 : raw > 1 ? 1 : raw;
+
+      if (p !== it.p) {
+        it.p = p;
+        it.el.style.setProperty("--p", p.toFixed(3));
+      }
+      if (p > 0.6 && it.isStat && !counted.has(it.el)) {
+        counted.add(it.el);
+        countUp(it.el);
+      }
+    }
+  }
+
+  let frameQueued = false;
+  function schedule() {
+    if (frameQueued) return;
+    frameQueued = true;
+    requestAnimationFrame(paint);
+  }
+
+  window.addEventListener("scroll", schedule, { passive: true });
+
+  /* Anything that can change the page's height invalidates the cache:
+     a window resize, images arriving, an FAQ row opening, a language
+     switch changing how much text there is. */
+  let remeasureTimer;
+  function remeasure() {
+    clearTimeout(remeasureTimer);
+    remeasureTimer = setTimeout(() => { measure(); schedule(); }, 100);
+  }
+  window.addEventListener("resize", remeasure);
+  window.addEventListener("load", remeasure);
+  document.addEventListener("cb:langchange", remeasure);
+  document.addEventListener("toggle", remeasure, true);
+  if ("ResizeObserver" in window) new ResizeObserver(remeasure).observe(document.body);
+
+  /* Play the page in on a timer once, with the stagger, then hand over
+     to the scrubber. */
+  measure();
+  document.body.classList.add("intro");
+  requestAnimationFrame(paint);
+  setTimeout(() => {
+    document.body.classList.remove("intro");
+    measure();
+    schedule();
+  }, 1400);
 }
 
 /* Numbers that tick up when the trust strip scrolls into view. */

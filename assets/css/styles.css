@@ -537,25 +537,27 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .callbar.is-up { transform: translateY(0); }
 
 /* ---------- SCROLL REVEALS ----------
-   One trigger line sits near the bottom of the screen. Above it an
-   element is shown, below it it is hidden — so scrolling up plays the
-   entrance backwards: the element sinks back down and fades out exactly
-   the way it rose up and faded in.
+   The animation is driven by scroll position, not by a timer. `--p` is
+   how far through the reveal an element is, 0 to 1, and app.js writes it
+   every frame from where the element sits on screen.
 
-   The stagger delay only applies on the way in. Going out, everything
-   leaves at once so the motion stays glued to the scroll.
+   That makes the whole thing a scrub: scrolling down plays it forward,
+   scrolling up plays the exact same frames backward. Scroll fast and it
+   plays fast — it can't be outrun, because there is no clock to beat.
+
+   The short transition is only smoothing between frames, so wheel
+   scrolling doesn't look stepped.
 ------------------------------------- */
 .reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  /* The hidden state is the target when scrolling up, so this is the
-     speed of the fade-out: quicker than the entrance, so it finishes
-     while the element is still on screen. */
-  transition: opacity .4s var(--ease), transform .4s var(--ease);
+  opacity: var(--p, 0);
+  transform: translateY(calc((1 - var(--p, 0)) * 22px));
+  transition: opacity .12s linear, transform .12s linear;
+  will-change: opacity, transform;
 }
-.reveal.is-in {
-  opacity: 1;
-  transform: none;
+
+/* First paint only: the page animates itself in on a timer, with the
+   stagger. app.js drops this class once the intro has played. */
+.intro .reveal {
   transition: opacity .7s var(--ease), transform .7s var(--ease);
   transition-delay: calc(var(--d, 0) * 90ms);
 }
@@ -622,13 +624,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------- MOTION / PRINT ---------- */
 @media (prefers-reduced-motion: reduce) {
   html, .rail { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal { --p: 1; opacity: 1; transform: none; transition: none; }
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
 @media print {
   .site-header, .callbar, .hero-glow, .quote-form, .carousel-controls { display: none !important; }
   .rail { display: grid; grid-template-columns: repeat(2, 1fr); overflow: visible; }
-  .reveal { opacity: 1; transform: none; }
+  .reveal { --p: 1; opacity: 1; transform: none; }
   body { background: #fff; }
 }
